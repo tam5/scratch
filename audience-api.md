@@ -3,7 +3,6 @@
 The LiveIntent Developer API allows programmatic interaction with the LiveIntent
 platform, offering developers the ability to streamline or automate certain tasks.
 
-
 ## Requirements
 In order to use the LiveIntent Developer API you must obtain a **username** and
 **password** from your contact at LiveIntent.
@@ -44,30 +43,26 @@ curl -X POST \
     'https://merlin.liveintent.com/realtime/audience/123456789?type=sha1'
 ```
 
-# Audiences
-LiveAudiences consist of hashed identifiers that can be used to target or
-suppress customers from your ad campaigns.
-
-## Creating an Audience
-Use this endpoint to create a new audience.
-
-**POST** `/audience`
-
-| Field       | Description                                                                                                  |
-| ----------- | -----------                                                                                                  |
-| advertiser  | **type:hash** <br><br> **required** <br><br> The id of the advertiser that the audience belongs to.          |
-| externalId  | **type:string(256)** <br><br> An optional id, which can used for referencing the audience in another system. |
-| name        | **type:string(128)** <br><br> **required** <br><br> The name of the audience.                                |
-| ttl         | **type:int** <br><br> The time-to-live, in seconds, of the audience.                                         |
-
-## Adding Hashes to an Audience
+# Adding Hashes to an Audience
 To upload CRM data to an audience you must first obtain a signed URL.
 
 #### Step 1: Obtain Presigned URL
+Obtain a presigned URL by making a request to the API as in the example below.
+Replace the `filename` field with the name of the file and the `type` field with
+the type of hash used (md5, sha1, or sha2).
+
 ```bash
 curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM4YzBhOWIwMjlkMzExZTY4YzE1MjIwMDBhOTc0NjUxIiwidXNlcm5hbWUiOiJhbWlsbGVyQGxpdmVpbnRlbnQuY29tIiwiYWNjZXNzVG9rZW4iOiJkYjdhYmY4NjE2ODgxZmMzY2RkOWI4N2RlODFmYjViZjU3OWUxNjQ0IiwiaWF0IjoxNTU2MTMwNDgzLCJleHAiOjE1UTYyMTY4ODN9.nneZtvwMr60rl_pARBB2PgDT1TsiSF41JsNh0XsncqQ' -d '{
     "filename": "{filename}",
     "action": "add",
     "type": "md5",
 }' 'https://merlin.liveintent.com/audience/upload/{audienceId}'
+```
+
+#### Step 2: Upload File to s3
+
+Using the presigned URL obtained from step 1, upload your file to s3.
+
+```bash
+curl -X PUT -T <path-to-file> <presigned-url>
 ```
