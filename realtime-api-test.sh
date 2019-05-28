@@ -69,7 +69,6 @@ if [ $missing ]; then exit 1; fi
 host="https://qa-merlin.liveintenteng.com"
 token=$(curl -s -XPOST "$host/login" -d "{ \"username\": \"$username\", \"password\": \"$password\" }" -H 'Content-Type: application/json' | jq -r '.token')
 
-echo $requests_per_second
 request_counter=0
 while [[ $request_counter -lt $total_requests ]]; do
     time curl -XPOST "$host/realtime/audience/$ref_id?type=$type" -d "$(cat $file_path)" -H "Authorization: bearer $token" -H 'Content-Type: text/plain'
