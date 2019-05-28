@@ -72,7 +72,7 @@ token=$(curl -s -XPOST "$host/login" -d "{ \"username\": \"$username\", \"passwo
 echo $requests_per_second
 request_counter=0
 while [[ $request_counter -lt $total_requests ]]; do
-    curl -XPOST "$host/realtime/audience/$ref_id?type=$type" -d "$(cat $file_path)" -H "Authorization: bearer $token" -H 'Content-Type: text/plain'
+    time curl -XPOST "$host/realtime/audience/$ref_id?type=$type" -d "$(cat $file_path)" -H "Authorization: bearer $token" -H 'Content-Type: text/plain'
 
     request_counter=$(($request_counter + 1))
     sleep $(echo "1 / $requests_per_second" | bc -l)
