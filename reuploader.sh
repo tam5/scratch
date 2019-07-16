@@ -27,16 +27,17 @@ fi
 mkdir -p $download_location
 mkdir -p $unzipped_location
 
-length=$(cat $input_file_name | wc -l)
+length=$(($(cat $input_file_name | wc -l)))
 
 IFS=,
 i=0
 while read userver_id unique_segment_id name file_name terminate; do
     ((i++))
+    SECONDS=0
 
     print_color blueb  "Processing file $file_name";
-    print_color yellow    "|  Unique Segment ID: $unique_segment_id";
-    print_color yellow -n "|  Percent Done: "; awk "BEGIN { print ($i/$length) * 100 }"
+    print_color yellow "|  Unique Segment ID: $unique_segment_id";
+    print_color yellow "|  File: $i out of $length";
 
     key=upload/$file_name
     unzipped_file_name=$(echo $file_name | sed -E 's/(.*).gz/\1/g')
@@ -109,7 +110,18 @@ while read userver_id unique_segment_id name file_name terminate; do
         break;
     fi
 
-    list_check "File successfully uploaded. You can check its progress here: https://platform.liveintent.com/campaign-manager/audiences/$unique_segment_id";
+    list_check "File successfully uploaded."
+    print_color yellow    "|  Unique Segment ID: $unique_segment_id";
+    print_color yellow    "|  File Size: $unique_segment_id";
+    print_color yellow    "|  Hashes Count: $(printf %\'.f $(cat $unzipped_location/$unzipped_file_name | wc -l))";
+    print_color yellow    "|  Link: https://platform.liveintent.com/campaign-manager/audiences/$unique_segment_id";
+    print_color yellow    "|  Elapsed Time: $(($SECONDS / 3600))hrs $((($SECONDS / 60) % 60))min $(($SECONDS % 60))sec";
+
+    print_work "Cleaning up..."
+    /bin/rm -f $download_location/$file_name
+    /bin/rm -f $unzipped_location/$unzipped_file_name
+    print_work "Removed temp files"
+    list_check "Done"
 
     echo;
     echo;
@@ -117,5 +129,4 @@ while read userver_id unique_segment_id name file_name terminate; do
     if [[ $i -gt 0 ]]; then
         break;
     fi
-
 done < $input_file_name
