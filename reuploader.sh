@@ -3,7 +3,7 @@
 ####################################################
 # Parameters
 ####################################################
-input_file_name=data.csv
+input_file_name=$1
 origin_bucket=liveintent-samsclub
 destination_bucket=liveaudience-uploader
 
@@ -18,6 +18,11 @@ set -o pipefail
 . ./utils.sh
 . ./spinner.sh
 lay_traps
+
+if [ -z $1 ]; then
+    print_color redb "Please specify an input file."
+    exit 1;
+fi
 
 mkdir -p $download_location
 mkdir -p $unzipped_location
