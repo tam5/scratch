@@ -106,8 +106,4 @@ while read userver_id unique_segment_id name file_name terminate; do
 
     echo;
     echo;
-
-    if [[ $i -gt 0 ]]; then
-       break;
-    fi
 done < $input_file_name
