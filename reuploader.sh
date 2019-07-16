@@ -93,14 +93,16 @@ while read userver_id unique_segment_id name file_name terminate; do
     #
     # Upload the file
     #
-    metadata="--metadata 'advertiser-id=$advertiser_id,type=$type'"
+    metadata="--metadata=advertiser-id=$advertiser_id,type=$type,segment-id=$segment_id,action=$action,unique-segment-id=$unique_segment_id"
     new_key="upload/$(date '+%Y-%m-%d')/$userver_id/$action/$(php -r ' echo bin2hex(random_bytes(12)); ')/$unzipped_file_name"
 
     print_work "Uploading the file to $destination_bucket"
     print_work "Will use key $new_key"
     print_work "Uploading..."
 
-    aws s3 cp $unzipped_location/$unzipped_file_name s3://$destination_bucket/$new_key "$metadata"
+    IFS=
+    aws s3 cp $unzipped_location/$unzipped_file_name s3://$destination_bucket/$new_key $metadata
+    IFS=,
 
     if [ $? -gt 0 ]; then
         print_color red "Unable to upload the file to $destination_bucket";
