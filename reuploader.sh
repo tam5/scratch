@@ -100,7 +100,7 @@ while read userver_id unique_segment_id name file_name terminate; do
     print_work "Will use key $new_key"
     print_work "Uploading..."
 
-    aws s3 cp $unzipped_location/$unzipped_file_name s3://$destination_bucket/$new_key
+    aws s3 cp $unzipped_location/$unzipped_file_name s3://$destination_bucket/$new_key "$metadata"
 
     if [ $? -gt 0 ]; then
         print_color red "Unable to upload the file to $destination_bucket";
@@ -111,4 +111,9 @@ while read userver_id unique_segment_id name file_name terminate; do
 
     echo;
     echo;
+
+    if [[ $i -gt 0 ]]; then
+        break;
+    fi
+
 done < $input_file_name
